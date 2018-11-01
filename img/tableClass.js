@@ -1,7 +1,7 @@
 export default class Table {
-    var xvals = [];
-    var yvals = [];
-    var open = 1;
+    public var xstart = 0;
+    public var ystart = 0;
+    public var open = 1;
 }
 
 
