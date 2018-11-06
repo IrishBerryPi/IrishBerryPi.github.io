@@ -57,14 +57,14 @@
 
             <canvas  id="myCanvas" width="750" height="450"> </canvas>
                 <script>
-                var request = new XMLHttpRequest();
+                  var request = new XMLHttpRequest();
                   request.open("GET", 'results.csv', false);
                   request.send(null);
 
-                  var csvData = new Array();
+                  var csvData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                   var jsonObject = request.responseText.split(/\r?\n|\r/);
                   for (var i = 0; i < jsonObject.length; i++) {
-                    csvData.push(jsonObject[i].split(','));
+                    csvData[i] = jsonObject[i].split(',');
                   }
                   console.log(csvData);
 
