@@ -61,7 +61,7 @@
                     request.open("GET", "results.csv", false);
                     request.send(null);
                     var csvData = new Array();
-                    var csvData = request.responseText.split(",");
+                    var csvData = request.responseText.split("\n");
 
                     function drawImage(imageObj) {
                         var canvas = document.getElementById('myCanvas');
