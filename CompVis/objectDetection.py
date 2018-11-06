@@ -6,6 +6,27 @@ import imutils
 import time
 import cv2
 
+
+class Table:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.occupied = False
+
+    def setLocation(self, newX, newY):
+        self.x = newX
+        self.y = newY
+
+class Person:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+
+    def setLocation(self, newX, newY):
+        self.x = newX
+        self.y = newY
+
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True,
@@ -39,6 +60,11 @@ fps = FPS().start()
 
 # loop over the frames from the video stream
 while True:
+       
+        time.sleep(.5)    
+        tables = []
+        people = []
+
 	# grab the frame from the threaded video stream and resize it
 	# to have a maximum width of 400 pixels
 	frame = vs.read()
@@ -67,8 +93,25 @@ while True:
 			# `detections`, then compute the (x, y)-coordinates of
 			# the bounding box for the object
 			idx = int(detections[0, 0, i, 1])
+                        
+                        # we only care about tables and people
+                        if idx != 11 and idx != 15:
+                            continue
+
 			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 			(startX, startY, endX, endY) = box.astype("int")
+
+                        # add tables to list
+                        if idx == 11:
+                            newTable = Table()
+                            newTable.setLocation((startX + endX) / 2, (startY + endY) / 2)
+                            tables.append(newTable)
+
+                        # add people to list
+                        if idx == 15:
+                            newPerson = Person()
+                            newPerson.setLocation((startX + endX) / 2, (startY + endY) / 2)
+                            people.append(newPerson)
  
 			# draw the prediction on the frame
 			label = "{}: {:.2f}%".format(CLASSES[idx],
@@ -83,6 +126,9 @@ while True:
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
  
+        print 'Tables:', str(len(tables))
+        print 'People:', str(len(people))
+
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
 		break
