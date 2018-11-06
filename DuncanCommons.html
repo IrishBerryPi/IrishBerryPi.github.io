@@ -13,13 +13,13 @@
     <!-- Custom fonts for this template -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i" rel="stylesheet">
-    <img  id = "Duncan" src="img/Duncan_commons.png" style="display: none;"/>  
+    <img  id = "Duncan" src="img/Duncan_commons.png" style="display: none;"/>
     <!-- Custom styles for this template -->
     <link href="css/business-casual.css" rel="stylesheet">
 
   </head>
 
-  <body> 
+  <body>
     <h1 class="site-heading text-center text-white d-none d-lg-block">
       <span class="site-heading-upper text-primary mb-3">IrishBerryPi</span>
       <span class="site-heading-lower">SeatInSight</span>
@@ -54,8 +54,19 @@
     </nav>
 
     <section class="page-section">
+
             <canvas  id="myCanvas" width="750" height="450"> </canvas>
                 <script>
+                var request = new XMLHttpRequest();
+                  request.open("GET", 'results.csv', false);
+                  request.send(null);
+
+                  var csvData = new Array();
+                  var jsonObject = request.responseText.split(/\r?\n|\r/);
+                  for (var i = 0; i < jsonObject.length; i++) {
+                    csvData.push(jsonObject[i].split(','));
+                  }
+
                   function drawImage(imageObj) {
                     var canvas = document.getElementById('myCanvas');
                     var context = canvas.getContext('2d');
@@ -68,7 +79,7 @@
                     var data = imageData.data;
                     var xstarts = [278, 278, 278, 278, 336, 336, 336, 392, 392, 392, 388, 448, 448, 448, 508, 508, 508, 508, 566, 566, 566, 628, 628, 628, 628];
                     var ystarts = [80, 156, 232, 300, 112, 192, 264, 80, 156, 228, 296, 108, 188, 264, 80, 160, 228, 296, 108, 192, 260, 84, 158, 228, 296];
-                    var open = [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1];
+                    var open = csvData;//[1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1];
                     for(var io = 0; io < open.length; io += 1) {
                         if(open[io] == 0){
                             for(var ix = xstarts[io]*4; ix < 4*(xstarts[io]+10); ix += 4){
@@ -87,7 +98,7 @@
                                     data[i+1] = 255; // Green
                                     data[i+2] = 0; // Blue
                                 }
-                            } 
+                            }
                         }
                     }
                     // overwrite original image
@@ -101,7 +112,7 @@
                     document.getElementById("myCanvas").style.marginRight = "auto";
                     myCanvas.style.display= 'block';
                   imageObj.src = "/img/Duncan_commons.png";
-                </script>    
+                </script>
     </section>
 
 
