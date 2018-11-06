@@ -57,53 +57,48 @@
 
             <canvas  id="myCanvas" width="750" height="450"> </canvas>
                 <script>
-                  var request = new XMLHttpRequest();
-                  request.open("GET", 'results.csv', false);
-                  request.send(null);
+                    var request = new XMLHttpRequest();
+                    request.open("GET", "results.csv", false);
+                    request.send(null);
+                    var csvData = new Array();
+                    var csvData = request.responseText.split(",");
 
-                  var csvData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                  var jsonObject = request.responseText.split(/\r?\n|\r/);
-                  for (var i = 0; i < csvData.length; i++) {
-                    csvData[i] = jsonObject[i].split(',');
-                  }
-                  console.log(csvData);
+                    function drawImage(imageObj) {
+                        var canvas = document.getElementById('myCanvas');
+                        var context = canvas.getContext('2d');
+                        var x = 0;
+                        var y = 0;
 
-                  function drawImage(imageObj) {
-                    var canvas = document.getElementById('myCanvas');
-                    var context = canvas.getContext('2d');
-                    var x = 0;
-                    var y = 0;
+                        context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height, 0, 0, canvas.width, canvas.height);
 
-                    context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height, 0, 0, canvas.width, canvas.height);
-
-                    var imageData = context.getImageData(x, y, imageObj.width, imageObj.height);
-                    var data = imageData.data;
-                    var xstarts = [278, 278, 278, 278, 336, 336, 336, 392, 392, 392, 388, 448, 448, 448, 508, 508, 508, 508, 566, 566, 566, 628, 628, 628, 628];
-                    var ystarts = [80, 156, 232, 300, 112, 192, 264, 80, 156, 228, 296, 108, 188, 264, 80, 160, 228, 296, 108, 192, 260, 84, 158, 228, 296];
-                    var open = csvData;//[1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1];
-                    for(var io = 0; io < open.length; io += 1) {
-                        if(open[io] == 0){
-                            for(var ix = xstarts[io]*4; ix < 4*(xstarts[io]+10); ix += 4){
-                                for(var iy = ystarts[io]*4; iy < 4*(ystarts[io]+10); iy += 4){
-                                    i = ix + iy*780;
-                                    data[i] = 255; // Red
-                                    data[i+1] = 0; // Green
-                                    data[i+2] = 0; // Blue
+                        var imageData = context.getImageData(x, y, imageObj.width, imageObj.height);
+                        var data = imageData.data;
+                        var xstarts = [278, 278, 278, 278, 336, 336, 336, 392, 392, 392, 388, 448, 448, 448, 508, 508, 508, 508, 566, 566, 566, 628, 628, 628, 628];
+                        var ystarts = [80, 156, 232, 300, 112, 192, 264, 80, 156, 228, 296, 108, 188, 264, 80, 160, 228, 296, 108, 192, 260, 84, 158, 228, 296];
+                        var open = csvData //[1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1];
+                        for(var io = 0; io < open.length; io += 1) {
+                            if(open[io] == 0){
+                                for(var ix = xstarts[io]*4; ix < 4*(xstarts[io]+10); ix += 4){
+                                    for(var iy = ystarts[io]*4; iy < 4*(ystarts[io]+10); iy += 4){
+                                        i = ix + iy*780;
+                                        data[i] = 255; // Red
+                                        data[i+1] = 0; // Green
+                                        data[i+2] = 0; // Blue
+                                    }
                                 }
-                            }
-                        } else {
-                           for(var ix = xstarts[io]*4; ix < 4*(xstarts[io]+10); ix += 4){
-                                for(var iy = ystarts[io]*4; iy < 4*(ystarts[io]+10); iy += 4){
-                                    i = ix + iy*780;
-                                    data[i] = 0; // Red
-                                    data[i+1] = 255; // Green
-                                    data[i+2] = 0; // Blue
+                            } else {
+                               for(var ix = xstarts[io]*4; ix < 4*(xstarts[io]+10); ix += 4){
+                                    for(var iy = ystarts[io]*4; iy < 4*(ystarts[io]+10); iy += 4){
+                                        i = ix + iy*780;
+                                        data[i] = 0; // Red
+                                        data[i+1] = 255; // Green
+                                        data[i+2] = 0; // Blue
+                                    }
                                 }
                             }
                         }
-                    }
-                    // overwrite original image
-                    context.putImageData(imageData, x, y);
+                        // overwrite original image
+                        context.putImageData(imageData, x, y);
                   }
                   var imageObj = new Image();
                   imageObj.onload = function() {
