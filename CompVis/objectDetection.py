@@ -26,6 +26,7 @@ class Person:
         self.x = newX
         self.y = newY
 
+websiteTables = np.zeros(25)
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -53,7 +54,8 @@ net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 # initialize the video stream, allow the cammera sensor to warmup,
 # and initialize the FPS counter
 print("[INFO] starting video stream...")
-vs = VideoStream(src=0).start()
+#vs = VideoStream(src=0).start()
+vs = VideoStream(usePiCamera=True).start()
 time.sleep(2.0)
 fps = FPS().start()
 
@@ -126,13 +128,22 @@ while True:
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
  
-        print 'Tables:', str(len(tables))
-        print 'People:', str(len(people))
+        # Determine if tables are occupied
+        for table in tables:
+            for person in people:
+                if abs(person.x - table.x) < 500 and abs(person.y - table.y) < 500:
+                    table.occupied = True
+                    websiteTables[0] = 1
+       
+
+        print "tables:", str(websiteTables[0])
+        # write to file
+        np.savetxt('../results.csv', websiteTables, delimiter=",")
 
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
 		break
- 
+
 	# update the FPS counter
 	fps.update()
 
