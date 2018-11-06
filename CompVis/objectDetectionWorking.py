@@ -6,28 +6,6 @@ import imutils
 import time
 import cv2
 
-
-class Table:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.occupied = False
-
-    def setLocation(self, newX, newY):
-        self.x = newX
-        self.y = newY
-
-class Person:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-
-    def setLocation(self, newX, newY):
-        self.x = newX
-        self.y = newY
-
-websiteTables = np.ones(25,dtype = np.int8)
-
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True,
@@ -54,7 +32,6 @@ net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 # initialize the video stream, allow the cammera sensor to warmup,
 # and initialize the FPS counter
 print("[INFO] starting video stream...")
-#vs = VideoStream(src=0).start()
 vs = VideoStream(usePiCamera=True).start()
 time.sleep(2.0)
 fps = FPS().start()
@@ -62,11 +39,6 @@ fps = FPS().start()
 
 # loop over the frames from the video stream
 while True:
-       
-        time.sleep(.5)    
-        tables = []
-        people = []
-
 	# grab the frame from the threaded video stream and resize it
 	# to have a maximum width of 400 pixels
 	frame = vs.read()
@@ -95,25 +67,8 @@ while True:
 			# `detections`, then compute the (x, y)-coordinates of
 			# the bounding box for the object
 			idx = int(detections[0, 0, i, 1])
-                        
-                        # we only care about tables and people
-                        if idx != 11 and idx != 15:
-                            continue
-
 			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 			(startX, startY, endX, endY) = box.astype("int")
-
-                        # add tables to list
-                        if idx == 11:
-                            newTable = Table()
-                            newTable.setLocation((startX + endX) / 2, (startY + endY) / 2)
-                            tables.append(newTable)
-
-                        # add people to list
-                        if idx == 15:
-                            newPerson = Person()
-                            newPerson.setLocation((startX + endX) / 2, (startY + endY) / 2)
-                            people.append(newPerson)
  
 			# draw the prediction on the frame
 			label = "{}: {:.2f}%".format(CLASSES[idx],
@@ -128,22 +83,10 @@ while True:
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
  
-        # Determine if tables are occupied
-        for table in tables:
-            for person in people:
-                if abs(person.x - table.x) < 500 and abs(person.y - table.y) < 500:
-                    table.occupied = True
-                    websiteTables[0] = 0
-       
-
-        print "tables:", str(websiteTables[0])
-        # write to file
-        np.savetxt('../results.csv', websiteTables, delimiter=",")
-
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
 		break
-
+ 
 	# update the FPS counter
 	fps.update()
 
