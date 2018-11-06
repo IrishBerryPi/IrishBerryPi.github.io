@@ -62,9 +62,9 @@
                   request.send(null);
 
                   var csvData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                  var jsonObject = request.responseText.split(/\r?\n|\r/);
+                  var jsonObject = request.responseText.split(',');
                   for (var i = 0; i < csvData.length; i++) {
-                    csvData[i] = jsonObject[i].split(',');
+                    csvData[i] = jsonObject[i];
                   }
                   console.log(csvData);
 
